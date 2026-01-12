@@ -2,6 +2,10 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { PolaroidPhoto, PhotoFilter } from './types';
 import { PolaroidCard } from './components/PolaroidCard';
+// @ts-ignore
+import { jsPDF } from 'https://esm.sh/jspdf@2.5.1';
+// @ts-ignore
+import html2canvas from 'https://esm.sh/html2canvas@1.4.1';
 
 const App: React.FC = () => {
   const [photos, setPhotos] = useState<PolaroidPhoto[]>([]);
@@ -60,17 +64,62 @@ const App: React.FC = () => {
     setPhotos((prev) => prev.map(p => ({ ...p, filter: filter })));
   };
 
-  const printPhotos = (landscape: boolean = false) => {
-    if (landscape) {
-      document.body.classList.add('print-landscape-active');
-    } else {
-      document.body.classList.remove('print-landscape-active');
+  const generatePDF = async (landscape: boolean = false) => {
+    if (photos.length === 0) return;
+    setIsProcessing(true);
+
+    try {
+      const orientation = landscape ? 'l' : 'p';
+      const pdf = new jsPDF({
+        orientation: orientation,
+        unit: 'cm',
+        format: 'a4'
+      });
+
+      const items = document.querySelectorAll('[data-pdf-item]');
+      const pageWidth = landscape ? 29.7 : 21;
+      const pageHeight = landscape ? 21 : 29.7;
+      
+      let x = 1;
+      let y = 1;
+      const margin = 0.5;
+      const itemWidth = 7; // Largura do card Polaroid definido no component
+      const itemHeight = 10; // Altura do card Polaroid definido no component
+
+      for (let i = 0; i < items.length; i++) {
+        const canvas = await html2canvas(items[i] as HTMLElement, {
+          scale: 3, // Alta qualidade
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff'
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+        // Verifica se cabe na linha atual
+        if (x + itemWidth > pageWidth - 1) {
+          x = 1;
+          y += itemHeight + margin;
+        }
+
+        // Verifica se precisa de nova página
+        if (y + itemHeight > pageHeight - 1) {
+          pdf.addPage();
+          x = 1;
+          y = 1;
+        }
+
+        pdf.addImage(imgData, 'JPEG', x, y, itemWidth, itemHeight);
+        x += itemWidth + margin;
+      }
+
+      pdf.save(`Anix-Polaroid-${Date.now()}.pdf`);
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      alert("Houve um erro ao gerar o PDF. Tente novamente.");
+    } finally {
+      setIsProcessing(false);
     }
-    
-    // Pequeno delay para garantir que o browser aplique a classe antes do diálogo de impressão
-    setTimeout(() => {
-      window.print();
-    }, 100);
   };
 
   return (
@@ -84,7 +133,7 @@ const App: React.FC = () => {
         </h2>
         <p className="text-stone-500 max-w-lg mx-auto mb-8 text-lg">
           Fotos <span className="font-bold underline decoration-amber-500">7x10 cm</span>. 
-          Clique na foto para ajustar zoom e posição!
+          As fotos serão organizadas automaticamente no PDF.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 p-6 bg-white rounded-3xl shadow-sm border border-stone-100">
@@ -114,29 +163,27 @@ const App: React.FC = () => {
 
           <div className="flex gap-2">
             <button
-              onClick={() => printPhotos(false)}
-              disabled={photos.length === 0}
+              onClick={() => generatePDF(false)}
+              disabled={photos.length === 0 || isProcessing}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
-                photos.length > 0 ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                photos.length > 0 && !isProcessing ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
               }`}
-              title="Salvar em PDF (A4 Vertical)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               PDF Vertical
             </button>
 
             <button
-              onClick={() => printPhotos(true)}
-              disabled={photos.length === 0}
+              onClick={() => generatePDF(true)}
+              disabled={photos.length === 0 || isProcessing}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
-                photos.length > 0 ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                photos.length > 0 && !isProcessing ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
               }`}
-              title="Salvar em PDF (A4 Horizontal)"
             >
               <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               PDF Horizontal
             </button>
@@ -166,22 +213,13 @@ const App: React.FC = () => {
         )}
       </div>
 
-      <div className="hidden print:block">
-        <div className="print-a4-page">
-           <div className="flex flex-wrap gap-[0.4cm] justify-center content-start">
-            {photos.map((photo) => (
-              <PolaroidCard key={photo.id} photo={photo} isEditable={false} />
-            ))}
-           </div>
-        </div>
-      </div>
-
       {isProcessing && (
-        <div className="fixed inset-0 bg-stone-900/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl">
+        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white p-10 rounded-3xl shadow-2xl flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p className="font-bold text-stone-700 text-center">
-              Revelando fotos para<br/>
-              <span className="text-amber-600">Anix Copiadora...</span>
+              Gerando seu arquivo PDF...<br/>
+              <span className="text-amber-600 font-medium">Anix Copiadora</span>
             </p>
           </div>
         </div>

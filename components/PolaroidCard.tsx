@@ -74,10 +74,11 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
   return (
     <div className="relative group transition-all duration-300">
       <div 
-        className="bg-white p-[0.45cm] shadow-xl border border-stone-200 flex flex-col items-center select-none"
+        data-pdf-item
+        className="bg-white p-[0.45cm] shadow-xl border border-stone-100 flex flex-col items-center select-none"
         style={{ width: '7cm', height: '10cm' }}
       >
-        {/* Photo area - Ajustada para 7x10 */}
+        {/* Photo area */}
         <div 
           ref={containerRef}
           className={`w-full h-[6.8cm] bg-stone-100 overflow-hidden relative shadow-inner cursor-pointer ${
@@ -95,12 +96,12 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
               filter: photo.filter,
               transform: `scale(${scale})`,
               objectPosition: `${posX}% ${posY}%`,
-              opacity: showControls ? 0.6 : 1
+              opacity: (showControls && isEditable) ? 0.6 : 1
             }}
           />
           
           {isEditable && showControls && !isDragging && (
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-[8px] px-2 py-1 rounded-full text-white pointer-events-none uppercase tracking-wider">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-[8px] px-2 py-1 rounded-full text-white pointer-events-none uppercase tracking-wider no-print">
               Arraste para alinhar
             </div>
           )}
@@ -133,32 +134,11 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     className="w-full accent-amber-500 h-1 cursor-pointer"
                   />
                 </div>
-                
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="flex flex-col">
-                    <label className="text-[8px]">Posição X</label>
-                    <input 
-                      type="range" min="0" max="100" step="1" value={posX}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseInt(e.target.value) })}
-                      className="w-full accent-amber-500 h-1 cursor-pointer"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[8px]">Posição Y</label>
-                    <input 
-                      type="range" min="0" max="100" step="1" value={posY}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseInt(e.target.value) })}
-                      className="w-full accent-amber-500 h-1 cursor-pointer"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           )}
 
-          <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
+          <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
         </div>
 
         {/* Caption area */}
@@ -185,7 +165,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg no-print z-10"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       )}
