@@ -77,23 +77,23 @@ const App: React.FC = () => {
 
       const items = document.querySelectorAll('[data-pdf-item]');
       const pageWidth = 21;
-      const pageHeight = 29.7;
       
       const itemWidth = 6.5; 
       const itemHeight = 9.0;
-      const gapX = 0.5;
-      const gapY = 0.5;
+      const gapX = 0.2; // Reduzido para caber 3 colunas
+      const gapY = 0.4;
 
-      const cols = 2;
+      const cols = 3; // Alterado para 3 colunas
       const startX = (pageWidth - (cols * itemWidth + (cols - 1) * gapX)) / 2;
-      const startY = 1.5;
+      const startY = 1.0;
 
       let currentX = startX;
       let currentY = startY;
       let countOnPage = 0;
 
       for (let i = 0; i < items.length; i++) {
-        if (countOnPage > 0 && countOnPage % 6 === 0) {
+        // Agora 9 fotos por página (3x3)
+        if (countOnPage > 0 && countOnPage % 9 === 0) {
           pdf.addPage();
           currentX = startX;
           currentY = startY;
@@ -101,13 +101,13 @@ const App: React.FC = () => {
         }
 
         const canvas = await html2canvas(items[i] as HTMLElement, {
-          scale: 2.5,
+          scale: 3, // Aumentado para melhor nitidez
           useCORS: true,
           logging: false,
           backgroundColor: '#ffffff'
         });
 
-        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
         pdf.addImage(imgData, 'JPEG', currentX, currentY, itemWidth, itemHeight);
         
@@ -121,7 +121,7 @@ const App: React.FC = () => {
         }
       }
 
-      pdf.save(`Anix-Polaroid-${Date.now()}.pdf`);
+      pdf.save(`Anix-Polaroid-9-Fotos-${Date.now()}.pdf`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
       alert("Houve um erro ao gerar o PDF.");
@@ -131,16 +131,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 py-12 min-h-screen">
       <header className="no-print mb-12 text-center">
         <h1 className="text-5xl font-extrabold text-stone-800 mb-2 tracking-tight">
           Anix <span className="text-amber-600">Copiadora</span>
         </h1>
         <h2 className="text-2xl font-semibold text-stone-500 mb-4">
-          Polaroid Studio
+          Polaroid Studio Premium
         </h2>
         <p className="text-stone-500 max-w-lg mx-auto mb-8 text-lg">
-          Layout de <span className="font-bold underline decoration-amber-500">6 fotos por folha</span>. 
+          Layout de <span className="font-bold underline decoration-amber-500">9 fotos por folha</span>. 
           Tamanho: 6.5 x 9.0 cm.
         </p>
 
@@ -179,7 +179,7 @@ const App: React.FC = () => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            Salvar PDF (A4)
+            Gerar PDF (9 por página)
           </button>
           
           <input type="file" ref={fileInputRef} onChange={handleFileUpload} multiple accept="image/*" className="hidden" />
@@ -192,7 +192,7 @@ const App: React.FC = () => {
             <h3 className="text-xl font-bold text-stone-400">Nenhuma foto adicionada</h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-16 justify-items-center">
             {photos.map((photo) => (
               <PolaroidCard 
                 key={photo.id} 
@@ -211,8 +211,8 @@ const App: React.FC = () => {
           <div className="bg-white p-10 rounded-3xl shadow-2xl flex flex-col items-center">
             <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p className="font-bold text-stone-700 text-center text-lg">
-              Gerando seu PDF...<br/>
-              <span className="text-amber-600 font-medium">Anix Copiadora</span>
+              Organizando 9 fotos por página...<br/>
+              <span className="text-amber-600 font-medium font-serif italic">Anix Copiadora</span>
             </p>
           </div>
         </div>

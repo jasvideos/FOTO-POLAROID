@@ -75,13 +75,13 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
     <div className="relative group transition-all duration-300">
       <div 
         data-pdf-item
-        className="bg-white p-[0.4cm] shadow-[0_10px_30px_rgba(0,0,0,0.15)] border-2 border-stone-200 flex flex-col items-center select-none ring-1 ring-black/5"
+        className="bg-white p-[0.4cm] shadow-[0_8px_25px_rgba(0,0,0,0.2)] border border-stone-300 flex flex-col items-center select-none"
         style={{ width: '6.5cm', height: '9.0cm' }}
       >
-        {/* Photo area */}
+        {/* Photo area with enhanced border/shadow */}
         <div 
           ref={containerRef}
-          className={`w-full h-[6.2cm] bg-stone-200 overflow-hidden relative shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] border border-stone-300 cursor-pointer ${
+          className={`w-full h-[6.2cm] bg-stone-200 overflow-hidden relative shadow-[0_0_10px_rgba(0,0,0,0.3)] border-2 border-stone-100 cursor-pointer ${
             isEditable ? 'hover:ring-4 ring-amber-400/50 ring-inset transition-all' : ''
           } ${isDragging ? 'cursor-grabbing' : showControls ? 'cursor-grab' : 'cursor-pointer'}`}
           onClick={() => isEditable && !isDragging && setShowControls(!showControls)}
@@ -102,7 +102,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           
           {isEditable && showControls && !isDragging && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 text-[8px] px-3 py-1 rounded-full text-white pointer-events-none uppercase font-bold tracking-widest no-print shadow-lg">
-              Mova para Ajustar
+              Ajuste a Foto
             </div>
           )}
 
@@ -113,12 +113,12 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
             >
               <div className="w-full space-y-2 bg-stone-900/90 backdrop-blur-md p-3 rounded-xl pointer-events-auto shadow-2xl border border-white/10">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] font-black uppercase text-amber-400">Controles</span>
+                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-tighter">Configurações</span>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setShowControls(false); }}
                     className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-inner"
                   >
-                    PRONTO
+                    OK
                   </button>
                 </div>
                 
@@ -141,15 +141,15 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
         </div>
 
-        {/* Caption area */}
+        {/* Caption area - if empty, stays white */}
         <div className="mt-auto w-full flex flex-col items-center pb-2">
           {isEditable ? (
             <input
               type="text"
               value={photo.caption}
               onChange={(e) => onUpdateCaption?.(photo.id, e.target.value)}
-              placeholder="Digite uma legenda..."
-              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 placeholder:text-stone-300 font-bold"
+              placeholder=""
+              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 font-bold"
             />
           ) : (
             <span className="polaroid-font text-2xl text-stone-800 h-10 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center font-bold">
@@ -162,7 +162,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       {isEditable && !showControls && (
         <button
           onClick={() => onDelete?.(photo.id)}
-          className="absolute -top-3 -right-3 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-[0_4px_12px_rgba(220,38,38,0.4)] no-print z-10 border-2 border-white scale-90 hover:scale-100 active:scale-90"
+          className="absolute -top-3 -right-3 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg no-print z-10 border-2 border-white scale-90 hover:scale-100 active:scale-90"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
