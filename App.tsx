@@ -60,8 +60,17 @@ const App: React.FC = () => {
     setPhotos((prev) => prev.map(p => ({ ...p, filter: filter })));
   };
 
-  const printPhotos = () => {
-    window.print();
+  const printPhotos = (landscape: boolean = false) => {
+    if (landscape) {
+      document.body.classList.add('print-landscape-active');
+    } else {
+      document.body.classList.remove('print-landscape-active');
+    }
+    
+    // Pequeno delay para garantir que o browser aplique a classe antes do diálogo de impressão
+    setTimeout(() => {
+      window.print();
+    }, 100);
   };
 
   return (
@@ -103,19 +112,35 @@ const App: React.FC = () => {
             Adicionar Fotos
           </button>
 
-          <button
-            onClick={printPhotos}
-            disabled={photos.length === 0}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-md ${
-              photos.length > 0 ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
-            }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="FileTextIcon" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Salvar em PDF
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => printPhotos(false)}
+              disabled={photos.length === 0}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
+                photos.length > 0 ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+              }`}
+              title="Salvar em PDF (A4 Vertical)"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              PDF Vertical
+            </button>
+
+            <button
+              onClick={() => printPhotos(true)}
+              disabled={photos.length === 0}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
+                photos.length > 0 ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+              }`}
+              title="Salvar em PDF (A4 Horizontal)"
+            >
+              <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              PDF Horizontal
+            </button>
+          </div>
           
           <input type="file" ref={fileInputRef} onChange={handleFileUpload} multiple accept="image/*" className="hidden" />
         </div>

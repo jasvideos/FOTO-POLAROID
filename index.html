@@ -12,18 +12,32 @@
         .polaroid-font { font-family: 'Caveat', cursive; }
         
         @media print {
-            @page {
-                size: A4;
-                margin: 1cm;
-            }
             .no-print { display: none !important; }
             body { background: white !important; margin: 0; padding: 0; }
             #root { width: 100%; }
+            
+            /* Padrão Retrato */
+            @page {
+                size: A4 portrait;
+                margin: 1cm;
+            }
             .print-a4-page {
                 display: block;
                 width: 19cm;
                 margin: 0 auto;
             }
+
+            /* Configuração Horizontal */
+            body.print-landscape-active {
+                width: 29.7cm;
+            }
+            body.print-landscape-active .print-a4-page {
+                width: 27.7cm;
+            }
+            body.print-landscape-active @page {
+                size: A4 landscape;
+            }
+
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -44,7 +58,6 @@
 </head>
 <body class="bg-stone-50 text-stone-900 min-h-screen">
     <div id="root">
-        <!-- Loader inicial para evitar tela branca pura enquanto o JS carrega -->
         <div class="flex items-center justify-center min-h-screen">
             <p class="text-stone-400 font-medium animate-pulse">Carregando Anix Studio...</p>
         </div>
