@@ -1,0 +1,7 @@
+{
+  "name": "Polaroid Studio 6x8",
+  "description": "A high-fidelity Polaroid photo creation app that formats images into vintage 6x8cm style prints with custom captions and filters.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
