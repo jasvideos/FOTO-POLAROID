@@ -17,10 +17,10 @@ const App: React.FC = () => {
     const fileList = Array.from(files);
     let loadedCount = 0;
 
-    fileList.forEach((file) => {
+    fileList.forEach((file: File) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        // Explicitly cast result to string as readAsDataURL always returns a string or null
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        // Use the result directly from the target
         const url = e.target?.result as string;
         
         if (url) {
