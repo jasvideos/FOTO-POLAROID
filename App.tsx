@@ -80,43 +80,55 @@ const App: React.FC = () => {
       const pageWidth = landscape ? 29.7 : 21;
       const pageHeight = landscape ? 21 : 29.7;
       
-      let x = 1;
-      let y = 1;
-      const margin = 0.5;
-      const itemWidth = 7; // Largura do card Polaroid definido no component
-      const itemHeight = 10; // Altura do card Polaroid definido no component
+      // Dimensões otimizadas para caber 6 por folha (2x3 ou 3x2)
+      const itemWidth = 6.5; 
+      const itemHeight = 9.0;
+      const gapX = 0.5;
+      const gapY = 0.5;
+
+      // Centralização básica
+      const cols = Math.floor((pageWidth - 2) / (itemWidth + gapX));
+      const startX = (pageWidth - (cols * itemWidth + (cols - 1) * gapX)) / 2;
+      const startY = 1.5;
+
+      let currentX = startX;
+      let currentY = startY;
+      let countOnPage = 0;
 
       for (let i = 0; i < items.length; i++) {
+        if (countOnPage > 0 && countOnPage % 6 === 0) {
+          pdf.addPage();
+          currentX = startX;
+          currentY = startY;
+          countOnPage = 0;
+        }
+
         const canvas = await html2canvas(items[i] as HTMLElement, {
-          scale: 3, // Alta qualidade
+          scale: 2.5,
           useCORS: true,
           logging: false,
           backgroundColor: '#ffffff'
         });
 
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
 
-        // Verifica se cabe na linha atual
-        if (x + itemWidth > pageWidth - 1) {
-          x = 1;
-          y += itemHeight + margin;
+        pdf.addImage(imgData, 'JPEG', currentX, currentY, itemWidth, itemHeight);
+        
+        countOnPage++;
+        
+        // Próxima posição
+        if (countOnPage % cols === 0) {
+          currentX = startX;
+          currentY += itemHeight + gapY;
+        } else {
+          currentX += itemWidth + gapX;
         }
-
-        // Verifica se precisa de nova página
-        if (y + itemHeight > pageHeight - 1) {
-          pdf.addPage();
-          x = 1;
-          y = 1;
-        }
-
-        pdf.addImage(imgData, 'JPEG', x, y, itemWidth, itemHeight);
-        x += itemWidth + margin;
       }
 
-      pdf.save(`Anix-Polaroid-${Date.now()}.pdf`);
+      pdf.save(`Anix-6-Fotos-${Date.now()}.pdf`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Houve um erro ao gerar o PDF. Tente novamente.");
+      alert("Houve um erro ao gerar o PDF.");
     } finally {
       setIsProcessing(false);
     }
@@ -132,8 +144,8 @@ const App: React.FC = () => {
           Polaroid Studio
         </h2>
         <p className="text-stone-500 max-w-lg mx-auto mb-8 text-lg">
-          Fotos <span className="font-bold underline decoration-amber-500">7x10 cm</span>. 
-          As fotos serão organizadas automaticamente no PDF.
+          Layout otimizado para <span className="font-bold underline decoration-amber-500">6 fotos por folha</span>. 
+          Tamanho aproximado: 6.5 x 9.0 cm.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 p-6 bg-white rounded-3xl shadow-sm border border-stone-100">
@@ -170,9 +182,9 @@ const App: React.FC = () => {
               }`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              PDF Vertical
+              PDF Vertical (6/folha)
             </button>
 
             <button
@@ -183,9 +195,9 @@ const App: React.FC = () => {
               }`}
             >
               <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              PDF Horizontal
+              PDF Horizontal (6/folha)
             </button>
           </div>
           
@@ -218,7 +230,7 @@ const App: React.FC = () => {
           <div className="bg-white p-10 rounded-3xl shadow-2xl flex flex-col items-center">
             <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p className="font-bold text-stone-700 text-center">
-              Gerando seu arquivo PDF...<br/>
+              Processando PDF Otimizado...<br/>
               <span className="text-amber-600 font-medium">Anix Copiadora</span>
             </p>
           </div>

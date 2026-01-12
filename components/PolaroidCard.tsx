@@ -75,13 +75,13 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
     <div className="relative group transition-all duration-300">
       <div 
         data-pdf-item
-        className="bg-white p-[0.45cm] shadow-xl border border-stone-100 flex flex-col items-center select-none"
-        style={{ width: '7cm', height: '10cm' }}
+        className="bg-white p-[0.4cm] shadow-xl border border-stone-100 flex flex-col items-center select-none"
+        style={{ width: '6.5cm', height: '9.0cm' }}
       >
         {/* Photo area */}
         <div 
           ref={containerRef}
-          className={`w-full h-[6.8cm] bg-stone-100 overflow-hidden relative shadow-inner cursor-pointer ${
+          className={`w-full h-[6.2cm] bg-stone-100 overflow-hidden relative shadow-inner cursor-pointer ${
             isEditable ? 'hover:ring-2 ring-amber-400 ring-inset transition-all' : ''
           } ${isDragging ? 'cursor-grabbing' : showControls ? 'cursor-grab' : 'cursor-pointer'}`}
           onClick={() => isEditable && !isDragging && setShowControls(!showControls)}
@@ -142,17 +142,17 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
         </div>
 
         {/* Caption area */}
-        <div className="mt-auto w-full flex flex-col items-center pb-2">
+        <div className="mt-auto w-full flex flex-col items-center pb-1">
           {isEditable ? (
             <input
               type="text"
               value={photo.caption}
               onChange={(e) => onUpdateCaption?.(photo.id, e.target.value)}
               placeholder="Legenda..."
-              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-700 placeholder:text-stone-300"
+              className="w-full text-center polaroid-font text-xl bg-transparent border-none outline-none focus:ring-0 text-stone-700 placeholder:text-stone-300"
             />
           ) : (
-            <span className="polaroid-font text-2xl text-stone-700 h-10 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center">
+            <span className="polaroid-font text-xl text-stone-700 h-8 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center">
               {photo.caption}
             </span>
           )}
