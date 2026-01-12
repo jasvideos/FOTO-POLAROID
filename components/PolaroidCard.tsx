@@ -45,13 +45,11 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
 
-      // Sensibilidade ajustada para escalas pequenas (mínimo 0.1)
       const sensitivity = 0.4 / Math.max(scale, 0.1);
       
       let newPosX = dragStartRef.current.initialPosX - (deltaX * sensitivity);
       let newPosY = dragStartRef.current.initialPosY - (deltaY * sensitivity);
 
-      // Clamp entre 0 e 100
       newPosX = Math.max(0, Math.min(100, newPosX));
       newPosY = Math.max(0, Math.min(100, newPosY));
 
@@ -76,13 +74,13 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
   return (
     <div className="relative group transition-all duration-300">
       <div 
-        className="bg-white p-[0.4cm] shadow-xl border border-stone-200 flex flex-col items-center select-none"
-        style={{ width: '6cm', height: '8cm' }}
+        className="bg-white p-[0.45cm] shadow-xl border border-stone-200 flex flex-col items-center select-none"
+        style={{ width: '7cm', height: '10cm' }}
       >
-        {/* Photo area */}
+        {/* Photo area - Ajustada para 7x10 */}
         <div 
           ref={containerRef}
-          className={`w-full h-[5.2cm] bg-stone-100 overflow-hidden relative shadow-inner cursor-pointer ${
+          className={`w-full h-[6.8cm] bg-stone-100 overflow-hidden relative shadow-inner cursor-pointer ${
             isEditable ? 'hover:ring-2 ring-amber-400 ring-inset transition-all' : ''
           } ${isDragging ? 'cursor-grabbing' : showControls ? 'cursor-grab' : 'cursor-pointer'}`}
           onClick={() => isEditable && !isDragging && setShowControls(!showControls)}
@@ -101,14 +99,12 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
             }}
           />
           
-          {/* Instrução de Arraste */}
           {isEditable && showControls && !isDragging && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-[8px] px-2 py-1 rounded-full text-white pointer-events-none uppercase tracking-wider">
               Arraste para alinhar
             </div>
           )}
 
-          {/* Overlay de Edição */}
           {isEditable && showControls && (
             <div 
               className="absolute inset-0 flex flex-col items-center justify-end p-2 text-white no-print pointer-events-none"
@@ -176,7 +172,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
               className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-700 placeholder:text-stone-300"
             />
           ) : (
-            <span className="polaroid-font text-2xl text-stone-700 h-8 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center">
+            <span className="polaroid-font text-2xl text-stone-700 h-10 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center">
               {photo.caption}
             </span>
           )}

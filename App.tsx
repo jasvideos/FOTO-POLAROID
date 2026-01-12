@@ -20,7 +20,6 @@ const App: React.FC = () => {
     fileList.forEach((file: File) => {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
-        // Use the result directly from the target
         const url = e.target?.result as string;
         
         if (url) {
@@ -68,11 +67,14 @@ const App: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 min-h-screen">
       <header className="no-print mb-12 text-center">
-        <h1 className="text-5xl font-extrabold text-stone-800 mb-4 tracking-tight">
-          Vintage <span className="text-amber-600">Polaroid</span> Studio
+        <h1 className="text-5xl font-extrabold text-stone-800 mb-2 tracking-tight">
+          Anix <span className="text-amber-600">Copiadora</span>
         </h1>
+        <h2 className="text-2xl font-semibold text-stone-500 mb-4">
+          Polaroid Studio
+        </h2>
         <p className="text-stone-500 max-w-lg mx-auto mb-8 text-lg">
-          Fotos <span className="font-bold underline decoration-amber-500">6x8 cm</span>. 
+          Fotos <span className="font-bold underline decoration-amber-500">7x10 cm</span>. 
           Clique na foto para ajustar zoom e posição!
         </p>
 
@@ -135,10 +137,9 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Container A4 */}
       <div className="hidden print:block">
         <div className="print-a4-page">
-           <div className="flex flex-wrap gap-[0.5cm] justify-start content-start">
+           <div className="flex flex-wrap gap-[0.4cm] justify-center content-start">
             {photos.map((photo) => (
               <PolaroidCard key={photo.id} photo={photo} isEditable={false} />
             ))}
@@ -149,7 +150,10 @@ const App: React.FC = () => {
       {isProcessing && (
         <div className="fixed inset-0 bg-stone-900/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-3xl shadow-2xl">
-            <p className="font-bold text-stone-700">Revelando fotos...</p>
+            <p className="font-bold text-stone-700 text-center">
+              Revelando fotos para<br/>
+              <span className="text-amber-600">Anix Copiadora...</span>
+            </p>
           </div>
         </div>
       )}
