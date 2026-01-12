@@ -64,30 +64,27 @@ const App: React.FC = () => {
     setPhotos((prev) => prev.map(p => ({ ...p, filter: filter })));
   };
 
-  const generatePDF = async (landscape: boolean = false) => {
+  const generatePDF = async () => {
     if (photos.length === 0) return;
     setIsProcessing(true);
 
     try {
-      const orientation = landscape ? 'l' : 'p';
       const pdf = new jsPDF({
-        orientation: orientation,
+        orientation: 'p',
         unit: 'cm',
         format: 'a4'
       });
 
       const items = document.querySelectorAll('[data-pdf-item]');
-      const pageWidth = landscape ? 29.7 : 21;
-      const pageHeight = landscape ? 21 : 29.7;
+      const pageWidth = 21;
+      const pageHeight = 29.7;
       
-      // Dimensões otimizadas para caber 6 por folha (2x3 ou 3x2)
       const itemWidth = 6.5; 
       const itemHeight = 9.0;
       const gapX = 0.5;
       const gapY = 0.5;
 
-      // Centralização básica
-      const cols = Math.floor((pageWidth - 2) / (itemWidth + gapX));
+      const cols = 2;
       const startX = (pageWidth - (cols * itemWidth + (cols - 1) * gapX)) / 2;
       const startY = 1.5;
 
@@ -116,7 +113,6 @@ const App: React.FC = () => {
         
         countOnPage++;
         
-        // Próxima posição
         if (countOnPage % cols === 0) {
           currentX = startX;
           currentY += itemHeight + gapY;
@@ -125,7 +121,7 @@ const App: React.FC = () => {
         }
       }
 
-      pdf.save(`Anix-6-Fotos-${Date.now()}.pdf`);
+      pdf.save(`Anix-Polaroid-${Date.now()}.pdf`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
       alert("Houve um erro ao gerar o PDF.");
@@ -144,11 +140,11 @@ const App: React.FC = () => {
           Polaroid Studio
         </h2>
         <p className="text-stone-500 max-w-lg mx-auto mb-8 text-lg">
-          Layout otimizado para <span className="font-bold underline decoration-amber-500">6 fotos por folha</span>. 
-          Tamanho aproximado: 6.5 x 9.0 cm.
+          Layout de <span className="font-bold underline decoration-amber-500">6 fotos por folha</span>. 
+          Tamanho: 6.5 x 9.0 cm.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 p-6 bg-white rounded-3xl shadow-sm border border-stone-100">
+        <div className="flex flex-wrap items-center justify-center gap-4 p-6 bg-white rounded-3xl shadow-sm border border-stone-200">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase text-stone-400">Filtro Global:</span>
             <select 
@@ -168,38 +164,23 @@ const App: React.FC = () => {
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md active:scale-95"
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95"
           >
             Adicionar Fotos
           </button>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => generatePDF(false)}
-              disabled={photos.length === 0 || isProcessing}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
-                photos.length > 0 && !isProcessing ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              PDF Vertical (6/folha)
-            </button>
-
-            <button
-              onClick={() => generatePDF(true)}
-              disabled={photos.length === 0 || isProcessing}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-bold transition-all shadow-md ${
-                photos.length > 0 && !isProcessing ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
-              }`}
-            >
-              <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              PDF Horizontal (6/folha)
-            </button>
-          </div>
+          <button
+            onClick={generatePDF}
+            disabled={photos.length === 0 || isProcessing}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold transition-all shadow-lg ${
+              photos.length > 0 && !isProcessing ? 'bg-stone-800 text-white hover:bg-stone-900 active:scale-95' : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Salvar PDF (A4)
+          </button>
           
           <input type="file" ref={fileInputRef} onChange={handleFileUpload} multiple accept="image/*" className="hidden" />
         </div>
@@ -211,7 +192,7 @@ const App: React.FC = () => {
             <h3 className="text-xl font-bold text-stone-400">Nenhuma foto adicionada</h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 justify-items-center">
             {photos.map((photo) => (
               <PolaroidCard 
                 key={photo.id} 
@@ -229,8 +210,8 @@ const App: React.FC = () => {
         <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white p-10 rounded-3xl shadow-2xl flex flex-col items-center">
             <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="font-bold text-stone-700 text-center">
-              Processando PDF Otimizado...<br/>
+            <p className="font-bold text-stone-700 text-center text-lg">
+              Gerando seu PDF...<br/>
               <span className="text-amber-600 font-medium">Anix Copiadora</span>
             </p>
           </div>
