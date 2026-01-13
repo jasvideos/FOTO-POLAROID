@@ -101,7 +101,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           
           {isEditable && showControls && !isDragging && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 text-[8px] px-3 py-1 rounded-full text-white pointer-events-none uppercase font-bold tracking-widest no-print shadow-lg whitespace-nowrap">
-              Sliders para ajuste fino
+              Ajuste fino X/Y
             </div>
           )}
 
@@ -143,7 +143,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="0" max="100" step="1" value={posX}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value), posY })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value) })}
                       className="w-full accent-blue-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
@@ -156,7 +156,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="-25" max="125" step="1" value={posY}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value), posX })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value) })}
                       className="w-full accent-emerald-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
@@ -173,7 +173,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
               value={photo.caption}
               onChange={(e) => onUpdateCaption?.(photo.id, e.target.value)}
               placeholder="Clique para legendar"
-              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 font-bold placeholder:text-stone-300"
+              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 font-bold placeholder:text-stone-300 placeholder:no-print"
             />
           ) : (
             <span className="polaroid-font text-2xl text-stone-800 h-10 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center font-bold">

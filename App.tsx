@@ -123,7 +123,6 @@ const App: React.FC = () => {
       const fileName = `Polaroid-Anix-${Date.now()}.pdf`;
       const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-      // Verifica se o navegador suporta compartilhamento de arquivos (Mobile/Safari/Chrome Moderno)
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
@@ -131,7 +130,6 @@ const App: React.FC = () => {
           text: 'Confira as fotos Polaroid que acabei de criar!',
         });
       } else {
-        // Fallback para Desktop: Baixa o arquivo e abre o WhatsApp com instrução
         const url = URL.createObjectURL(pdfBlob);
         const link = document.createElement('a');
         link.href = url;
