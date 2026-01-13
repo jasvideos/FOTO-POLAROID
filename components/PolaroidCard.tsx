@@ -45,16 +45,13 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
 
-      // Sensibilidade baseada no zoom
       const sensitivity = 0.4 / Math.max(scale, 0.1);
       
-      // Cálculo independente para X e Y
       let newPosX = dragStartRef.current.initialPosX - (deltaX * sensitivity);
       let newPosY = dragStartRef.current.initialPosY - (deltaY * sensitivity);
 
-      // Limites: X até 100%, Y aumentado para 150% conforme pedido
       newPosX = Math.max(0, Math.min(100, newPosX));
-      newPosY = Math.max(-25, Math.min(125, newPosY)); // Expandindo a margem para permitir o alcance extra
+      newPosY = Math.max(-25, Math.min(125, newPosY));
 
       onUpdateAdjustment?.(photo.id, { posX: newPosX, posY: newPosY });
     };
@@ -81,7 +78,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
         className="bg-white p-[0.4cm] shadow-[0_8px_25px_rgba(0,0,0,0.2)] border border-stone-300 flex flex-col items-center select-none"
         style={{ width: '6.5cm', height: '9.0cm' }}
       >
-        {/* Foto Frame */}
         <div 
           ref={containerRef}
           className={`w-full h-[6.2cm] bg-stone-200 overflow-hidden relative shadow-[0_0_12px_rgba(0,0,0,0.35)] border-2 border-stone-100 cursor-pointer ${
@@ -105,7 +101,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           
           {isEditable && showControls && !isDragging && (
             <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 text-[8px] px-3 py-1 rounded-full text-white pointer-events-none uppercase font-bold tracking-widest no-print shadow-lg whitespace-nowrap">
-              Ajuste com os sliders ou arraste
+              Sliders para ajuste fino
             </div>
           )}
 
@@ -126,7 +122,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                 </div>
                 
                 <div className="grid grid-cols-1 gap-2">
-                  {/* Zoom */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>ZOOM</span>
@@ -140,7 +135,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     />
                   </div>
 
-                  {/* Eixo Horizontal (X) */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>ESQUERDA / DIREITA (X)</span>
@@ -149,12 +143,11 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="0" max="100" step="1" value={posX}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value) })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value), posY })}
                       className="w-full accent-blue-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
 
-                  {/* Eixo Vertical (Y) - Aumentado em 150% */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>CIMA / BAIXO (Y - 150%)</span>
@@ -163,7 +156,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="-25" max="125" step="1" value={posY}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value) })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value), posX })}
                       className="w-full accent-emerald-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
@@ -173,7 +166,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           )}
         </div>
 
-        {/* Legenda (Caveat Font) */}
         <div className="mt-auto w-full flex flex-col items-center pb-2">
           {isEditable ? (
             <input
