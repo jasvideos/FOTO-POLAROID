@@ -45,6 +45,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
 
+      // Sensibilidade ajustada ao zoom
       const sensitivity = 0.4 / Math.max(scale, 0.1);
       
       let newPosX = dragStartRef.current.initialPosX - (deltaX * sensitivity);
@@ -78,7 +79,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
         className="bg-white p-[0.4cm] shadow-[0_8px_25px_rgba(0,0,0,0.2)] border border-stone-300 flex flex-col items-center select-none"
         style={{ width: '6.5cm', height: '9.0cm' }}
       >
-        {/* Foto Frame */}
+        {/* Foto Frame - Usando Background Image para melhor compatibilidade com PDF */}
         <div 
           ref={containerRef}
           className={`w-full h-[6.2cm] bg-stone-200 overflow-hidden relative shadow-[0_0_12px_rgba(0,0,0,0.35)] border-2 border-stone-100 cursor-pointer ${
@@ -87,15 +88,14 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           onClick={() => isEditable && !isDragging && setShowControls(!showControls)}
           onMouseDown={handleMouseDown}
         >
-          <img 
-            src={photo.url} 
-            alt="Polaroid Content" 
-            draggable={false}
-            className="w-full h-full object-cover pointer-events-none"
+          <div 
+            className="w-full h-full pointer-events-none transition-[filter,opacity] duration-300"
             style={{ 
+              backgroundImage: `url(${photo.url})`,
+              backgroundSize: `${scale * 100}%`,
+              backgroundPosition: `${posX}% ${posY}%`,
+              backgroundRepeat: 'no-repeat',
               filter: photo.filter,
-              transform: `scale(${scale})`,
-              objectPosition: `${posX}% ${posY}%`,
               opacity: (showControls && isEditable) ? 0.6 : 1
             }}
           />
@@ -129,7 +129,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                       <span className="text-amber-400">{scale.toFixed(1)}x</span>
                     </label>
                     <input 
-                      type="range" min="0.5" max="4" step="0.05" value={scale}
+                      type="range" min="1" max="5" step="0.05" value={scale}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => onUpdateAdjustment?.(photo.id, { scale: parseFloat(e.target.value) })}
                       className="w-full accent-amber-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
@@ -144,7 +144,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="0" max="100" step="1" value={posX}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value), posY })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value) })}
                       className="w-full accent-blue-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
@@ -157,7 +157,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     <input 
                       type="range" min="-25" max="125" step="1" value={posY}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value), posX })}
+                      onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value) })}
                       className="w-full accent-emerald-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
@@ -167,7 +167,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           )}
         </div>
 
-        {/* Legenda (Caveat Font) */}
+        {/* Legenda */}
         <div className="mt-auto w-full flex flex-col items-center pb-2">
           {isEditable ? (
             <input
