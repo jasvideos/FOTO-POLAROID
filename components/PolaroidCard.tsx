@@ -52,8 +52,9 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       let newPosX = dragStartRef.current.initialPosX - (deltaX * sensitivity);
       let newPosY = dragStartRef.current.initialPosY - (deltaY * sensitivity);
 
+      // Limites: X até 100%, Y aumentado para 150% conforme pedido
       newPosX = Math.max(0, Math.min(100, newPosX));
-      newPosY = Math.max(0, Math.min(100, newPosY));
+      newPosY = Math.max(-25, Math.min(125, newPosY)); // Expandindo a margem para permitir o alcance extra
 
       onUpdateAdjustment?.(photo.id, { posX: newPosX, posY: newPosY });
     };
@@ -115,7 +116,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
             >
               <div className="w-full space-y-3 bg-stone-900/95 backdrop-blur-md p-3 rounded-xl pointer-events-auto shadow-2xl border border-white/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-tighter">Enquadramento Manual</span>
+                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-tighter">Enquadramento Especial</span>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setShowControls(false); }}
                     className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-inner transition-colors"
@@ -153,14 +154,14 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     />
                   </div>
 
-                  {/* Eixo Vertical (Y) */}
+                  {/* Eixo Vertical (Y) - Aumentado em 150% */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
-                      <span>CIMA / BAIXO (Y)</span>
+                      <span>CIMA / BAIXO (Y - 150%)</span>
                       <span className="text-emerald-400">{Math.round(posY)}%</span>
                     </label>
                     <input 
-                      type="range" min="0" max="100" step="1" value={posY}
+                      type="range" min="-25" max="125" step="1" value={posY}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value) })}
                       className="w-full accent-emerald-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
