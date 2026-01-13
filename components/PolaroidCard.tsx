@@ -123,7 +123,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                 </div>
                 
                 <div className="grid grid-cols-1 gap-2">
-                  {/* Zoom */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>ZOOM</span>
@@ -137,7 +136,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     />
                   </div>
 
-                  {/* Eixo Horizontal (X) */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>ESQUERDA / DIREITA (X)</span>
@@ -151,7 +149,6 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     />
                   </div>
 
-                  {/* Eixo Vertical (Y) */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>CIMA / BAIXO (Y)</span>
