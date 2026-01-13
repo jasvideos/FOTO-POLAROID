@@ -45,9 +45,10 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
 
-      // Sensibilidade ajustada com base no zoom para um arrasto mais natural
+      // Sensibilidade baseada no zoom
       const sensitivity = 0.4 / Math.max(scale, 0.1);
       
+      // Cálculo independente para X e Y
       let newPosX = dragStartRef.current.initialPosX - (deltaX * sensitivity);
       let newPosY = dragStartRef.current.initialPosY - (deltaY * sensitivity);
 
@@ -70,7 +71,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, photo.id, posX, posY, scale, onUpdateAdjustment, isEditable]);
+  }, [isDragging, photo.id, scale, onUpdateAdjustment, isEditable]);
 
   return (
     <div className="relative group transition-all duration-300">
@@ -79,7 +80,7 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
         className="bg-white p-[0.4cm] shadow-[0_8px_25px_rgba(0,0,0,0.2)] border border-stone-300 flex flex-col items-center select-none"
         style={{ width: '6.5cm', height: '9.0cm' }}
       >
-        {/* Foto com Sombra de Contorno */}
+        {/* Foto Frame */}
         <div 
           ref={containerRef}
           className={`w-full h-[6.2cm] bg-stone-200 overflow-hidden relative shadow-[0_0_12px_rgba(0,0,0,0.35)] border-2 border-stone-100 cursor-pointer ${
@@ -90,9 +91,9 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
         >
           <img 
             src={photo.url} 
-            alt="User photo" 
+            alt="Polaroid Content" 
             draggable={false}
-            className="w-full h-full object-cover pointer-events-none transition-all duration-75"
+            className="w-full h-full object-cover pointer-events-none"
             style={{ 
               filter: photo.filter,
               transform: `scale(${scale})`,
@@ -102,8 +103,8 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
           />
           
           {isEditable && showControls && !isDragging && (
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 text-[8px] px-3 py-1 rounded-full text-white pointer-events-none uppercase font-bold tracking-widest no-print shadow-lg">
-              Arraste ou use os Sliders
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 text-[8px] px-3 py-1 rounded-full text-white pointer-events-none uppercase font-bold tracking-widest no-print shadow-lg whitespace-nowrap">
+              Ajuste com os sliders ou arraste
             </div>
           )}
 
@@ -114,21 +115,21 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
             >
               <div className="w-full space-y-3 bg-stone-900/95 backdrop-blur-md p-3 rounded-xl pointer-events-auto shadow-2xl border border-white/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-tighter">Ajustes de Enquadramento</span>
+                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-tighter">Enquadramento Manual</span>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setShowControls(false); }}
                     className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-inner transition-colors"
                   >
-                    CONCLUIR
+                    OK
                   </button>
                 </div>
                 
                 <div className="grid grid-cols-1 gap-2">
-                  {/* Zoom Control */}
+                  {/* Zoom */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
                       <span>ZOOM</span>
-                      <span>{scale.toFixed(1)}x</span>
+                      <span className="text-amber-400">{scale.toFixed(1)}x</span>
                     </label>
                     <input 
                       type="range" min="0.5" max="4" step="0.05" value={scale}
@@ -138,50 +139,48 @@ export const PolaroidCard: React.FC<PolaroidCardProps> = ({
                     />
                   </div>
 
-                  {/* Horizontal Position (X) */}
+                  {/* Eixo Horizontal (X) */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
-                      <span>ALINHAMENTO H (X)</span>
-                      <span>{Math.round(posX)}%</span>
+                      <span>ESQUERDA / DIREITA (X)</span>
+                      <span className="text-blue-400">{Math.round(posX)}%</span>
                     </label>
                     <input 
                       type="range" min="0" max="100" step="1" value={posX}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => onUpdateAdjustment?.(photo.id, { posX: parseFloat(e.target.value) })}
-                      className="w-full accent-blue-400 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
+                      className="w-full accent-blue-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
 
-                  {/* Vertical Position (Y) */}
+                  {/* Eixo Vertical (Y) */}
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-bold flex justify-between text-stone-300">
-                      <span>ALINHAMENTO V (Y)</span>
-                      <span>{Math.round(posY)}%</span>
+                      <span>CIMA / BAIXO (Y)</span>
+                      <span className="text-emerald-400">{Math.round(posY)}%</span>
                     </label>
                     <input 
                       type="range" min="0" max="100" step="1" value={posY}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => onUpdateAdjustment?.(photo.id, { posY: parseFloat(e.target.value) })}
-                      className="w-full accent-emerald-400 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
+                      className="w-full accent-emerald-500 h-1.5 rounded-lg cursor-pointer appearance-none bg-stone-700"
                     />
                   </div>
                 </div>
               </div>
             </div>
           )}
-
-          <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
         </div>
 
-        {/* Legenda */}
+        {/* Legenda (Caveat Font) */}
         <div className="mt-auto w-full flex flex-col items-center pb-2">
           {isEditable ? (
             <input
               type="text"
               value={photo.caption}
               onChange={(e) => onUpdateCaption?.(photo.id, e.target.value)}
-              placeholder=""
-              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 font-bold"
+              placeholder="Clique para legendar"
+              className="w-full text-center polaroid-font text-2xl bg-transparent border-none outline-none focus:ring-0 text-stone-800 font-bold placeholder:text-stone-300"
             />
           ) : (
             <span className="polaroid-font text-2xl text-stone-800 h-10 overflow-hidden text-ellipsis whitespace-nowrap w-full text-center flex items-center justify-center font-bold">
